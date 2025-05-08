@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ dname }}'s Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #2561ec;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--dark), #16213e);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.4s ease;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-drawer.open {
+            left: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .drawer-header h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+        }
+
+        .close-drawer {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-drawer:hover {
+            color: var(--accent);
+            transform: rotate(90deg);
+        }
+
+        /* Tabs Navigation */
+        .drawer-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: white;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Items List */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 3px solid var(--primary);
+        }
+
+        .item-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+            border-left-color: var(--accent);
+        }
+
+        .item-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .item-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 10px;
+        }
+
+        .item-link {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(37, 97, 236, 0.2);
+            color: var(--accent);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-right: 8px;
+        }
+
+        .item-link:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .item-image {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* Menu Button */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .menu-btn i {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Rest of your existing styles... */
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: var(--opacity); }
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float var(--duration) infinite ease-in-out;
+        }
+
+        .shape.circle {
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        }
+
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: var(--size) solid transparent;
+            border-right: var(--size) solid transparent;
+            border-bottom: var(--size) solid var(--accent);
+            background: transparent;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            display: flex;
+            max-width: 1000px;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.95);
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            transition: all 0.5s ease;
+            margin: 60px auto;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .container:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(-5px) scale(1);
+        }
+
+        /* Profile Picture */
+        .profile-pic {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .profile-pic img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 30px rgba(75, 168, 196, 0.4);
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+
+        .profile-pic::before {
+            content: '';
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            animation: rotate 8s linear infinite;
+            opacity: 0.7;
+            z-index: 0;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-pic:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(16, 7, 113, 0.6);
+        }
+
+        /* Info Section */
+        .info-section {
+            flex: 2;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 8s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 3px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .info-box:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+        }
+
+        h3 i {
+            margin-right: 10px;
+        }
+
+        .info-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        strong {
+            color: white;
+            font-weight: 500;
+        }
+
+        /* Skills */
+        .skills-container {
+            margin: 20px 0;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-box {
+            background: linear-gradient(45deg, rgba(106, 17, 203, 0.3), rgba(37, 117, 252, 0.3));
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .skill-box:hover {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            color: var(--dark);
+            transform: translateY(-5px) scale(1.1);
+        }
+
+        /* Projects Button */
+        .projects-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(37, 97, 236, 0.4);
+            transition: all 0.3s;
+        }
+
+        .projects-btn:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(37, 97, 236, 0.6);
+        }
+
+        .projects-btn i {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                margin: 80px auto;
+            }
+
+            .info-section {
+                padding: 20px 0 0 0;
+            }
+
+            .profile-pic img {
+                width: 200px;
+                height: 200px;
+            }
+
+            .profile-pic::before {
+                width: 210px;
+                height: 210px;
+            }
+
+            .info-box {
+                text-align: left;
+            }
+
+            h3 {
+                justify-content: center;
+            }
+
+            .skills {
+                justify-content: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .nav-drawer {
+                width: 280px;
+                left: -280px;
+            }
+
+            .nav-drawer.open {
+                left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .profile-pic img {
+                width: 150px;
+                height: 150px;
+            }
+
+            .profile-pic::before {
+                width: 160px;
+                height: 160px;
+            }
+
+            .nav-drawer {
+                width: 85%;
+                left: -85%;
+            }
+
+            .projects-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navigation Drawer -->
+    <div class="nav-drawer" id="navDrawer">
+        <div class="drawer-header">
+            <h2>My Portfolio</h2>
+            <button class="close-drawer" id="closeDrawer">&times;</button>
+        </div>
+        
+        <div class="drawer-tabs">
+            <button class="tab-btn active" data-tab="projects">Projects</button>
+            <button class="tab-btn" data-tab="achievements">Achievements</button>
+        </div>
+        
+        <div class="tab-content">
+            <!-- Projects Tab -->
+            <div class="tab-pane active" id="projects-tab">
+                <div class="items-list" id="projects-list">
+                    {% if projects %}
+                        {% for project in projects %}
+                        <div class="item-card">
+                            <div class="item-title">{{ project.name }}</div>
+                            {% if project.description %}
+                            <div class="item-desc">{{ project.description }}</div>
+                            {% endif %}
+                            <a href="{{ project.link }}" class="item-link" target="_blank">View Project</a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="item-card">
+                            <div class="item-title">No projects added yet</div>
+                            <div class="item-desc">Check back later for updates</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Achievements Tab -->
+            <div class="tab-pane" id="achievements-tab">
+                <div class="items-list" id="achievements-list">
+                    {% if achievements %}
+                        {% for achievement in achievements %}
+                        <div class="item-card">
+                            <div class="item-title">{{ achievement.name }}</div>
+                            {% if achievement.image %}
+                            <img src="{{ achievement.image }}" class="item-image" alt="{{ achievement.name }}">
+                            {% endif %}
+                            {% if achievement.description %}
+                            <div class="item-desc">{{ achievement.description }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="item-card">
+                            <div class="item-title">No achievements added yet</div>
+                            <div class="item-desc">Check back later for updates</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Menu Button -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Projects Button -->
+    <button class="projects-btn" id="projectsBtn">
+        <i class="fas fa-trophy"></i>
+    </button>
+
+    <!-- Background Animation -->
+    <div class="bg-animation" id="bgAnimation"></div>
+    <div class="floating-shapes" id="floatingShapes"></div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="profile-pic">
+            <img src="{{ img }}" alt="{{ fname }}'s Profile Picture" onerror="this.onerror=null; this.src='./static/images/test.jpg'">
+        </div>
+        <div class="info-section">
+            <h1>{{fname}}</h1>
+            <h1> {{ dlname }}</h1>
+            <p class="tagline">{{ dabout }}</p>
+
+            <div class="info-box">
+                <h3><i class="fas fa-graduation-cap"></i> Education</h3>
+                <p class="info-text"><strong>School:</strong> {{ dsch }}</p>
+                <p class="info-text"><strong>College:</strong> {{ dcol }}</p>
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fas fa-address-card"></i> Contact</h3>
+                <p class="info-text"><strong>Phone:</strong> {{ dph }}</p>
+                <p class="info-text"><strong>Email:</strong> {{ demail }}</p>
+            </div>
+
+            <div class="skills-container">
+                <h3><i class="fas fa-code"></i> Skills</h3>
+                <div class="skills">
+                    {% if ds1 %}<div class="skill-box">{{ ds1 }}</div>{% endif %}
+                    {% if ds2 %}<div class="skill-box">{{ ds2 }}</div>{% endif %}
+                    {% if ds3 %}<div class="skill-box">{{ ds3 }}</div>{% endif %}
+                    {% if ds4 %}<div class="skill-box">{{ ds4 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="social-links">
+                {% if insta %}<a href="https://instagram.com/{{ insta }}" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>{% endif %}
+                {% if git %}<a href="https://github.com/{{ git }}" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create background stars
+        function createStars() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random properties
+                const size = Math.random() * 3 + 1;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const opacity = Math.random() * 0.5 + 0.1;
+                const duration = Math.random() * 5 + 3;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                star.style.setProperty('--opacity', opacity);
+                star.style.setProperty('--duration', `${duration}s`);
+                
+                bgAnimation.appendChild(star);
+            }
+        }
+
+        // Create floating shapes
+        function createShapes() {
+            const container = document.getElementById('floatingShapes');
+            const shapeCount = 8;
+            
+            for (let i = 0; i < shapeCount; i++) {
+                const shape = document.createElement('div');
+                shape.classList.add('shape');
+                
+                // Random properties
+                const size = Math.random() * 100 + 50;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const duration = Math.random() * 20 + 10;
+                const shapeType = Math.floor(Math.random() * 2);
+                
+                shape.style.width = `${size}px`;
+                shape.style.height = `${size}px`;
+                shape.style.left = `${posX}%`;
+                shape.style.top = `${posY}%`;
+                shape.style.setProperty('--size', `${size}px`);
+                shape.style.setProperty('--duration', `${duration}s`);
+                
+                if (shapeType === 0) {
+                    shape.classList.add('circle');
+                } else {
+                    shape.classList.add('triangle');
+                }
+                
+                container.appendChild(shape);
+            }
+        }
+
+        // Drawer functionality
+        const navDrawer = document.getElementById('navDrawer');
+        const closeDrawer = document.getElementById('closeDrawer');
+        const menuBtn = document.getElementById('menuBtn');
+        const projectsBtn = document.getElementById('projectsBtn');
+        const overlay = document.getElementById('overlay');
+
+        function toggleDrawer() {
+            navDrawer.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        menuBtn.addEventListener('click', toggleDrawer);
+        projectsBtn.addEventListener('click', toggleDrawer);
+        closeDrawer.addEventListener('click', toggleDrawer);
+        overlay.addEventListener('click', toggleDrawer);
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('active');
+                });
+                
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        document.querySelectorAll('.item-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+        window.onload = function() {
+            createStars();
+            createShapes();
+        };
+    </script>
+</body>
+</html>

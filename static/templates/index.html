@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container welcome-container">
+    {% if username %}
+        <h1 class="welcome-title">Welcome, {{ username }}!</h1>
+        <p style="margin-bottom: 1rem;">You're successfully logged in.</p><br />
+        <a href="{{ url_for('logout') }}" class="btn logout-btn">Logout</a>
+    {% else %}
+        <h1 class="welcome-title">Welcome!</h1>
+        <p style="margin-bottom: 1rem;">Please login or register to continue.</p>
+        <a href="{{ url_for('login') }}" class="btn" style="margin-bottom: 1rem;">Login</a>
+        <a href="{{ url_for('register') }}" class="btn" style="background: linear-gradient(45deg, #4ac94e, #63ed7d);">Register</a>
+    {% endif %}
+</div>
+{% endblock %}

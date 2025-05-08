@@ -1,0 +1,57 @@
+/* Projects Section */
+#projects-container {
+    margin-top: 8px;
+}
+
+.project-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.project-input input {
+    flex: 1;
+    padding-right: 35px;
+}
+
+.remove-project {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: rgba(255, 50, 50, 0.8);
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.2s;
+}
+
+.remove-project:hover {
+    color: #ff3232;
+}
+
+.add-project-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--accent);
+    padding: 8px 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+}
+
+.add-project-btn:hover {
+    background: rgba(0, 255, 157, 0.1);
+    border-color: var(--accent);
+}
+
+.add-project-btn i {
+    font-size: 16px;
+}
