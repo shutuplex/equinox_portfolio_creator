@@ -1,5 +1,6 @@
 import os
 
 class Config:
-    SECRET_KEY = "sarvesh"
-    MONGO_URI = "mongodb+srv://redhoenix:adifeb72@adidb.z5wtg.mongodb.net/?retryWrites=true&w=majority&appName=AdiDB"
+    "Config class for variables"
+    SECRET_KEY = "" # add your own secret key eg. userxd etc
+    MONGO_URI = "" #add your own mongo db uri from mongodb.com
