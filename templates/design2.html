@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: rgb(252, 249, 249);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: left;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Navigation Drawer */
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(15, 32, 39, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.4s ease;
+            padding: 20px;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-drawer.open {
+            left: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .drawer-header h2 {
+            color: #add8e6;
+            font-size: 1.5rem;
+            background: linear-gradient(to right, #add8e6, #729eac);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .close-drawer {
+            background: none;
+            border: none;
+            color: #add8e6;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-drawer:hover {
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* Tabs Navigation */
+        .drawer-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            color: #add8e6;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #add8e6;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(173, 216, 230, 0.1);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .project-list, .achievement-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .project-item, .achievement-item {
+            background: rgba(127, 210, 235, 0.15);
+            padding: 15px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            border-left: 3px solid #add8e6;
+        }
+
+        .project-item:hover, .achievement-item:hover {
+            background: rgba(127, 210, 235, 0.25);
+            transform: translateX(5px);
+        }
+
+        .project-title, .achievement-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #add8e6;
+        }
+
+        .project-desc, .achievement-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 10px;
+        }
+
+        .project-link {
+            display: inline-block;
+            padding: 6px 15px;
+            background: rgba(173, 216, 230, 0.3);
+            color: #add8e6;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(173, 216, 230, 0.5);
+        }
+
+        .project-link:hover {
+            background: #add8e6;
+            color: #0f2027;
+            box-shadow: 0 0 15px rgba(173, 216, 230, 0.5);
+        }
+
+        .achievement-image {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Projects Button */
+        .projects-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #add8e6;
+            color: #0f2027;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(173, 216, 230, 0.4);
+            transition: all 0.3s;
+        }
+
+        .projects-btn:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(173, 216, 230, 0.6);
+        }
+
+        .projects-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Menu Button */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(173, 216, 230, 0.2);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-btn:hover {
+            background: rgba(173, 216, 230, 0.3);
+            transform: scale(1.1);
+        }
+
+        .menu-btn i {
+            color: #add8e6;
+            font-size: 1.5rem;
+        }
+
+        /* Snowflake animation */
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(10, 136, 209, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 
+                        0 0 30px rgba(74, 164, 194, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            animation: slideIn 1s ease-in-out;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-50px) scale(0.95);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                        rgba(173, 216, 230, 0.4), 
+                        rgba(255, 255, 255, 0.8), 
+                        rgba(173, 216, 230, 0.4));
+            z-index: -1;
+            border-radius: 25px;
+            animation: borderGlow 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .container:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes borderGlow {
+            0% {
+                background-position: 0% 50%;
+                opacity: 0.7;
+            }
+            50% {
+                background-position: 100% 50%;
+                opacity: 1;
+            }
+            100% {
+                background-position: 0% 50%;
+                opacity: 0.7;
+            }
+        }
+
+        .profile-img {
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .profile-img::before {
+            content: '';
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00b4db, #0083b0, #00b4db);
+            z-index: -1;
+            top: -5px;
+            left: -5px;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.4;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+        }
+
+        .profile-img img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid rgb(58, 154, 195);
+            box-shadow: 0 0 25px rgba(173, 216, 230, 0.8);
+            transition: transform 0.5s ease;
+        }
+
+        .profile-img:hover img {
+            transform: scale(1.05) rotate(1deg);
+        }
+
+        .content {
+            flex-grow: 1;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin: 15px 0;
+            background: linear-gradient(to right, rgba(158, 172, 187, 0.759), #729eac);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: rgb(16, 60, 74);
+            text-shadow: 0 2px 10px rgba(36, 38, 39, 0.69);
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            }
+            to {
+                text-shadow: 0 0 15px rgba(248, 251, 251, 0.87);
+            }
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .info, .skills, .social-links {
+            margin-top: 20px;
+        }
+
+        h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: #08495d;
+            position: relative;
+            display: inline-block;
+        } 
+        .dont {
+            color: brown;
+        }
+
+        h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, #add8e6, white);
+            animation: underlineExpand 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes underlineExpand {
+            from {
+                width: 50px;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        .info p, .skills div, .social-links a {
+            background: rgba(127, 210, 235, 0.837);
+            padding: 12px 18px;
+            border-radius: 15px;
+            margin-bottom: 12px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info p:hover, .skills div:hover {
+            transform: translateY(-3px);
+            background: rgba(30, 215, 200, 0.3);
+            color: #110e1f;
+            box-shadow: 0 5px 15px rgba(173, 216, 230, 0.4);
+        }
+
+        .info p strong {
+            color: #add8e6;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .skills div {
+            font-weight: 600;
+            animation: skillFloat 3s ease-in-out infinite;
+            animation-delay: calc(var(--i) * 0.2s);
+        }
+
+        @keyframes skillFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        } 
+
+        .social-links a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .social-links a:hover {
+            background: white;
+            color: #0c0c0c;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(173, 216, 230, 0.6);
+        }
+
+        .social-links a:hover::before {
+            left: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h3::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .profile-img img {
+                width: 180px;
+                height: 180px;
+            }
+
+            .nav-drawer {
+                width: 280px;
+                left: -280px;
+            }
+
+            .nav-drawer.open {
+                left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+
+            .info p, .skills div, .social-links a {
+                padding: 10px 15px;
+            }
+
+            .nav-drawer {
+                width: 85%;
+                left: -85%;
+            }
+
+            .projects-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Drawer -->
+    <div class="nav-drawer" id="navDrawer">
+        <div class="drawer-header">
+            <h2><i class="fas fa-folder-open"></i> My Portfolio</h2>
+            <button class="close-drawer" id="closeDrawer">&times;</button>
+        </div>
+        
+        <div class="drawer-tabs">
+            <button class="tab-btn active" data-tab="projects">Projects</button>
+            <button class="tab-btn" data-tab="achievements">Achievements</button>
+        </div>
+        
+        <div class="tab-content">
+            <!-- Projects Tab -->
+            <div class="tab-pane active" id="projects-tab">
+                <div class="project-list" id="projectList">
+                    {% if projects %}
+                        {% for project in projects %}
+                        <div class="project-item">
+                            <div class="project-title">{{ project.name }}</div>
+                            {% if project.description %}
+                            <div class="project-desc">{{ project.description }}</div>
+                            {% endif %}
+                            <a href="{{ project.link }}" class="project-link" target="_blank">View Project</a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="project-item">
+                            <div class="project-title">No projects added yet</div>
+                            <div class="project-desc">Check back later for updates</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Achievements Tab -->
+            <div class="tab-pane" id="achievements-tab">
+                <div class="achievement-list" id="achievementList">
+                    {% if achievements %}
+                        {% for achievement in achievements %}
+                        <div class="achievement-item">
+                            <div class="achievement-title">{{ achievement.name }}</div>
+                            {% if achievement.image %}
+                            <img src="{{ achievement.image }}" class="achievement-image" alt="{{ achievement.name }}">
+                            {% endif %}
+                            {% if achievement.description %}
+                            <div class="achievement-desc">{{ achievement.description }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="achievement-item">
+                            <div class="achievement-title">No achievements added yet</div>
+                            <div class="achievement-desc">Check back later for updates</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Menu Button -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <button class="projects-btn" id="projectsBtn">
+        <i class="fas fa-code"></i>
+    </button>
+
+    <div class="container">
+        <div class="profile-img">
+            <img src="{{ img | default('/static/images/test.jpg') }}" alt="Profile Picture">
+        </div>
+        <div class="content">
+            <h1>{{ fname }} {{ dlname }}</h1>
+            <p>{{ dabout }}</p>
+
+            <div class="info">
+                <h3>Education</h3>
+                <p><strong class="dont">School:</strong> {{ dsch }}</p>
+                <p><strong class="dont">College:</strong> {{ dcol }}</p>
+            </div>
+
+            <div class="info">
+                <h3>Contact</h3>
+                <p><strong class="dont">phone:</strong> {{ dph }}</p>
+                <p><strong class="dont">Email:</strong> {{ demail }}</p>
+            </div>
+
+            <h3>Skills</h3>
+            <div class="skills">
+                {% if ds1 %}<div style="--i:0">{{ ds1 }}</div>{% endif %}
+                {% if ds2 %}<div style="--i:1">{{ ds2 }}</div>{% endif %}
+                {% if ds3 %}<div style="--i:2">{{ ds3 }}</div>{% endif %}
+                {% if ds4 %}<div style="--i:3">{{ ds4 }}</div>{% endif %}
+            </div>
+
+            <h3>Social Links</h3>
+            <div class="social-links">
+                {% if insta %}<a href="https://instagram.com/{{ insta }}" target="_blank">Instagram</a>{% endif %}
+                {% if git %}<a href="https://github.com/{{ git }}" target="_blank">GitHub</a>{% endif %}
+                {% if linkedin %}<a href="https://linkedin.com/in/{{ linkedin }}" target="_blank">LinkedIn</a>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create snowflakes
+        function createSnowflakes() {
+            const snowflakesContainer = document.body;
+            const snowflakeCount = 30;
+            
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                
+                // Random size between 2px and 6px
+                const size = Math.random() * 4 + 2;
+                snowflake.style.width = `${size}px`;
+                snowflake.style.height = `${size}px`;
+                
+                // Random position
+                snowflake.style.left = `${Math.random() * 100}vw`;
+                
+                // Random animation duration between 5s and 15s
+                const duration = Math.random() * 10 + 5;
+                snowflake.style.animationDuration = `${duration}s`;
+                
+                // Random delay
+                snowflake.style.animationDelay = `${Math.random() * 5}s`;
+                
+                snowflakesContainer.appendChild(snowflake);
+            }
+        }
+        
+        // Drawer functionality
+        const navDrawer = document.getElementById('navDrawer');
+        const closeDrawer = document.getElementById('closeDrawer');
+        const menuBtn = document.getElementById('menuBtn');
+        const projectsBtn = document.getElementById('projectsBtn');
+        const overlay = document.getElementById('overlay');
+
+        function toggleDrawer() {
+            navDrawer.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        menuBtn.addEventListener('click', toggleDrawer);
+        projectsBtn.addEventListener('click', toggleDrawer);
+        closeDrawer.addEventListener('click', toggleDrawer);
+        overlay.addEventListener('click', toggleDrawer);
+
+        // Tab switching functionality
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabBtns.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab panes
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('active');
+                });
+                
+                // Show the selected tab pane
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Close drawer when clicking on a project link (but allow the link to work)
+        document.querySelectorAll('.project-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent the drawer from closing
+            });
+        });
+
+        // Initialize animations when page loads
+        window.addEventListener('load', () => {
+            createSnowflakes();
+            const container = document.querySelector('.container');
+            container.style.animation = 'slideIn 1s ease-in-out';
+            const skills = document.querySelectorAll('.skills div');
+            skills.forEach((skill, index) => {
+                skill.style.animationDelay = `${index * 0.2}s`;
+            });
+        });
+    </script>
+</body>
+</html>
