@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #E8DCC5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .black-bar {
+            background-color: black;
+            width: 15vw;
+            height: 100%;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 0.6fr 1.4fr 1fr 1fr;
+            grid-template-rows: 0.8fr 1fr 1fr 0.8fr 0.8fr;
+            gap: 10px 10px;
+            grid-auto-flow: row;
+            grid-template-areas:
+                "sec1 sec1 sec1 sec1 sec1 sec1"
+                "sec2 sec2 sec2 sec3 sec4 sec4"
+                "sec2 sec2 sec2 sec3 sec4 sec4"
+                "sec5 sec5 sec6 sec6 sec4 sec4"
+                "sec5 sec5 sec6 sec6 sec7 sec7";
+            background-color: #E8DCC5;
+            padding: 20px;
+            width: 70vw;
+            height: 100vh;
+        }
+        .container div {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        /* .sec3 {
+            opacity: 1;
+            transform: scale(1.5);
+            z-index: 10;
+        } */
+
+        .sec1 { grid-area: sec1; background-color: #2F3E2F; border-radius: 10px; }
+        .sec2 { grid-area: sec2; background-color: #2F3E2F; border-radius: 10px; }
+        .sec3 { grid-area: sec3; background-color: #B18C66; border-radius: 10px; }
+        .sec4 { grid-area: sec4; background-color: #2F3E2F; border-radius: 10px; }
+        .sec5 { grid-area: sec5; background-color: #2F3E2F; border-radius: 10px; }
+        .sec6 { grid-area: sec6; background-color: #B18C66; border-radius: 10px; }
+        .sec7 { grid-area: sec7; background-color: #2F3E2F; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="black-bar"></div>
+        <div class="container">
+            <div class="sec1"></div>
+            <div class="sec2"></div>
+            <div class="sec3"></div>
+            <div class="sec4"></div>
+            <div class="sec5"></div>
+            <div class="sec6"></div>
+            <div class="sec7"></div>
+        </div>
+        <div class="black-bar"></div>
+    </div>
+    <script>
+
+gsap.set(".sec3", {
+    scale: 1.2,
+    opacity: 1,
+    xPercent: -50,  
+    yPercent: 30,  
+    zIndex: 10
+});
+
+
+setTimeout(() => {
+    const tl = gsap.timeline();
+
+    tl.to(".sec3", {
+        scale: 1,
+        xPercent: 0,
+        yPercent: 0,
+        duration: 0.8,
+        ease: "power2.out"
+    })
+    .to(".container", { 
+        scale: 1, 
+        opacity: 1, 
+        duration: 0.7, 
+        ease: "power2.out" 
+    })
+    .to(".container div", { 
+        opacity: 1, 
+        scale: 1, 
+        duration: 0.8, 
+        ease: "back.out(1.7)", 
+        stagger: 0.2,
+        exclude: [".sec3"]
+    });
+}, 2000);  
+    </script>
+</body>
+</html>
