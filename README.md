@@ -1,4 +1,4 @@
-! [Image](https://files.catbox.moe/33yica.jpg)
+(https://files.catbox.moe/33yica.jpg)
 
 # Equinox Portfolio Creator Web
 A modern, responsive portfolio builder for developers, designers, and creatives.
