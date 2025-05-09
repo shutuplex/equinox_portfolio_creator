@@ -1,3 +1,9 @@
+<style> 
+img{
+  height: 50px 
+  width: 50px
+}
+</style>
 <img src="https://files.catbox.moe/33yica.jpg"> 
 # Equinox Portfolio Creator Web
 A modern, responsive portfolio builder for developers, designers, and creatives.
