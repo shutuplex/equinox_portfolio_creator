@@ -1,4 +1,3 @@
-(https://files.catbox.moe/33yica.jpg)
 
 # Equinox Portfolio Creator Web
 A modern, responsive portfolio builder for developers, designers, and creatives.
@@ -21,7 +20,8 @@ A modern, responsive portfolio builder for developers, designers, and creatives.
 | Icons           | Bootstrap Icons      |
 | Fonts           | Google Fonts         |
 | Responsive      | Mobile-first CSS     |
-| Backend         | Flask(python), Jinja templating  | 
+| Backend         | Flask(python), Jinja templating, pymongo( to interact with mongo db)  | 
+| Database       | Mongo db | 
 
 ## 👥 Contributions
 
