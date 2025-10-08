@@ -26,7 +26,7 @@ A modern, responsive portfolio builder for developers, designers, and creatives.
 ## 👥 Contributions
 
 - [Sarvesh patil](https://github.com/shutuplexus) - Backend and Database management
-- [Aditya Chaudhary ](https://github.com/CrimsonPhoenix27)  - Frontend Development and Ui/Ux design
+- [Ayush Mishra ](https://github.com/realayushh)  - Frontend Development and Ui/Ux design
 ```html
 <!-- Personal Info -->
 {{ dname }} - Your name
